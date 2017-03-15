@@ -39,6 +39,7 @@ def get_all_trip_data(years=[2015, 2016]):
       df.ix[df['birth year'].isin([null_char]), 'birth year'] = year
       df['birth year'] = df['birth year'].astype(int)
       df['age'] = year - df['birth year']
+
       dfs.append(df)
   return pd.concat(dfs, ignore_index=True)
 
@@ -51,10 +52,11 @@ def get_stations_from_trips(trips):
   stations = stations.loc[:, station_properties]
   # Take only unique instances - there appear to be some misspellings? 
   stations = stations.drop_duplicates()
-  x, y = lat_lon_to_xy(stations['lat'], stations['lon'])
+  x, y = lat_lon_to_xy(stations['lat']*np.pi/180.0, stations['lon']*np.pi/180.0)
   stations['x'] = x
   stations['y'] = y
   return stations
+
 def get_hubway_data(years=[2015,2016]):
   trips = get_all_trip_data(years)
   stations = get_stations_from_trips(trips)
