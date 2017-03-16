@@ -60,6 +60,15 @@ def get_stations_from_trips(trips):
 def get_hubway_data(years=[2015,2016]):
   trips = get_all_trip_data(years)
   stations = get_stations_from_trips(trips)
+  distance = np.zeros(trips.shape[0])
+  # Probably faster to just compute as is done in get_stations_from_trips (vectorized)
+  for idx, row in trips.iterrows():
+    x1 = stations.loc[stations['start station id'] == row['start station id'], 'x'].iloc[0]
+    y1 = stations.loc[stations['start station id'] == row['start station id'], 'y'].iloc[0]
+    x2 = stations.loc[stations['start station id'] == row['end station id'], 'x'].iloc[0]
+    y2 = stations.loc[stations['start station id'] == row['end station id'], 'y'].iloc[0]
+    distance[idx] = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+  trips['distance'] = distance 
   return trips, stations
 
 if __name__=='__main__':
